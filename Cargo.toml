@@ -1,0 +1,10 @@
+[package]
+author = "Brandon Dyer"
+description = "SDK for lotide"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+name = "meztide"
+repository = "https://github.com/ProjectHoot/meztide"
+version = "0.0.1"
+
+[dependencies]
