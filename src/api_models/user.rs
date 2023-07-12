@@ -4,6 +4,9 @@ use crate::ids::UserId;
 
 use super::{AvatarInfo, Content};
 
+/// Basic data about a user
+///
+/// Note: perhaps this should be called `MinimalUserInfo`?
 #[derive(Debug, Deserialize)]
 pub struct MinimalAuthorInfo {
     pub id: UserId,
@@ -31,5 +34,5 @@ pub struct User {
 pub struct ModeratorInfo {
     #[serde(flatten)]
     pub base: MinimalAuthorInfo,
-    pub moderator_since: Option<String>,
+    pub moderator_since: Option<Box<str>>,
 }

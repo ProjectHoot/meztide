@@ -17,6 +17,7 @@ pub enum NotificationInfo {
     },
 }
 
+/// User notification data
 #[derive(Debug, Deserialize)]
 pub struct Notification {
     #[serde(flatten)]

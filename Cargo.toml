@@ -5,8 +5,12 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 name = "meztide"
 repository = "https://github.com/ProjectHoot/meztide"
-version = "0.12.0"
+version = "0.12.1"
 
 [dependencies]
 reqwest = {version = "0.11", features = ["json"]}
 serde = {version = "1.0", features = ["derive"]}
+smallstr = {version = "0.3.0", features = ["serde"]}
+
+[dev-dependencies]
+tokio = {version = "1.0", features = ["full"]}

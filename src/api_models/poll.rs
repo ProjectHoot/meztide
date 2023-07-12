@@ -7,7 +7,7 @@ use super::JustId;
 #[derive(Debug, Deserialize)]
 #[serde(untagged)]
 pub enum PollVoteBody {
-    Multiple { options: Vec<PollOptionId> },
+    Multiple { options: Box<[PollOptionId]> },
     Single { option: PollOptionId },
 }
 
@@ -28,6 +28,6 @@ pub struct PollInfo {
     pub multiple: bool,
     pub options: Box<[PollOption]>,
     pub your_vote: Option<PollYourVote>,
-    pub closed_at: Option<String>,
+    pub closed_at: Option<Box<str>>,
     pub is_closed: bool,
 }

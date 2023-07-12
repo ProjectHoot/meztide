@@ -20,6 +20,7 @@ pub struct CommunityFeeds {
     pub atom: CommunityFeedsType,
 }
 
+/// Full community info
 #[derive(Debug, Deserialize)]
 pub struct CommunityInfo {
     #[serde(flatten)]
@@ -36,6 +37,7 @@ pub struct CommunityInfo {
     pub pending_moderation_actions: Option<u32>,
 }
 
+/// Community info contained in things like posts
 #[derive(Debug, Deserialize)]
 pub struct MinimalCommunityInfo {
     pub id: CommunityId,

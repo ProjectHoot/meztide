@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 use crate::ids::PostId;
 
-use super::{Empty, MinimalAuthorInfo, MinimalCommunityInfo, PollInfo};
+use super::{Content, Empty, MinimalAuthorInfo, MinimalCommunityInfo, PollInfo};
 
 #[derive(Debug, Deserialize)]
 pub struct PostInfo {
@@ -15,15 +15,22 @@ pub struct PostInfo {
     pub poll: Option<PollInfo>,
 }
 
+impl PostInfo {
+    #[inline]
+    pub fn id(&self) -> PostId {
+        self.post.id()
+    }
+}
+
 #[derive(Debug, Deserialize)]
 pub struct PostListPost {
-    pub id: PostId,
-    pub title: Box<str>,
-    pub remote_url: Option<Box<str>>,
+    #[serde(flatten)]
+    pub base: MinimalPostInfo,
+
+    #[serde(flatten)]
+    pub content: Content,
+
     pub href: Option<Box<str>>,
-    pub content_text: Option<Box<str>>,
-    pub content_markdown: Option<Box<str>>,
-    pub content_html: Option<String>,
     pub author: Option<MinimalAuthorInfo>,
     pub created: Box<str>,
     pub community: MinimalCommunityInfo,
@@ -32,7 +39,13 @@ pub struct PostListPost {
     pub score: i64,
     pub sticky: bool,
     pub your_vote: Option<Empty>,
-    pub sensitive: bool,
+}
+
+impl PostListPost {
+    #[inline]
+    pub fn id(&self) -> PostId {
+        self.base.id
+    }
 }
 
 #[derive(Debug, Deserialize)]

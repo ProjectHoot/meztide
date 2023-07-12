@@ -1,3 +1,5 @@
+//! Models returned by the API
+
 pub use {
     avatar::*, comment::*, community::*, content::*, empty::*, flag::*, instance_info::*, just::*,
     list::*, login::*, modlog::*, notification::*, poll::*, post::*, user::*,

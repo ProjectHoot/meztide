@@ -22,6 +22,7 @@ pub enum SiteModlogEventDetails {
     },
 }
 
+/// Modlog events that occur accross the instance
 #[derive(Debug, Deserialize)]
 pub struct SiteModlogEvent {
     pub time: Box<str>,
@@ -38,6 +39,7 @@ pub enum CommunityModlogEventDetails {
     ApprovePost { post: MinimalPostInfo },
 }
 
+/// Modlog events that occur within a community
 #[derive(Debug, Deserialize)]
 pub struct CommunityModlogEvent {
     pub time: Box<str>,

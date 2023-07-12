@@ -10,7 +10,7 @@ pub struct MinimalCommentInfo {
     pub remote_url: Option<Box<str>>,
     pub sensitive: bool,
     pub content_text: Option<Box<str>>,
-    pub content_html: Option<String>,
+    pub content_html: Option<Box<str>>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -18,10 +18,10 @@ pub struct PostCommentInfo {
     #[serde(flatten)]
     pub base: MinimalCommentInfo,
 
-    pub attachments: Vec<JustUrl>,
+    pub attachments: Box<[JustUrl]>,
     pub author: Option<MinimalAuthorInfo>,
     pub content_markdown: Option<Box<str>>,
-    pub created: String,
+    pub created: Box<str>,
     pub deleted: bool,
     pub local: bool,
     pub replies: Option<List<PostCommentInfo>>,

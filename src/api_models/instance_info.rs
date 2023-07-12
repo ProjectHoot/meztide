@@ -2,6 +2,7 @@ use serde::Deserialize;
 
 use super::Content;
 
+/// Info about the backend software running the instance
 #[derive(Debug, Deserialize)]
 pub struct InstanceSoftware {
     /// Example: "lotide"
@@ -10,6 +11,7 @@ pub struct InstanceSoftware {
     pub version: Box<str>,
 }
 
+/// General info about the instance
 #[derive(Debug, Deserialize)]
 pub struct InstanceInfo {
     pub software: InstanceSoftware,

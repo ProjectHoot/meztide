@@ -1,26 +1,41 @@
+//! Starting point for interacting with a lotide API
+
 use reqwest::{Method, RequestBuilder};
 use serde::de::DeserializeOwned;
 
-use crate::api_models::InstanceInfo;
+use crate::{
+    api_models::{CommunityInfo, InstanceInfo, List, PostListPost},
+    prelude::{ReqCommunities, ReqPosts},
+};
 
 /// Starting point for interacting with a lotide API
-pub struct Ctx {
+pub struct Client {
     client: reqwest::Client,
     instance_url: String,
     token: Option<Box<str>>,
 }
 
-impl Ctx {
-    /// Create a new [`Ctx`]
+impl Client {
+    /// Create a new [`Client`]
     ///
     /// `instance_url` should be the full base url to the instance's API,
     /// e.g. `https://lotide.example.com/api/unstable`
-    pub fn new(instance_url: String) -> Self {
+    pub fn new(instance_url: impl ToString) -> Self {
         Self {
             client: reqwest::Client::new(),
-            instance_url,
+            instance_url: instance_url.to_string(),
             token: None,
         }
+    }
+
+    /// Get the internal [`reqwest::Client`] instance
+    pub fn reqwest_client(&self) -> &reqwest::Client {
+        &self.client
+    }
+
+    /// Get the internal [`reqwest::Client`] instance mutably
+    pub fn reqwest_client_mut(&mut self) -> &mut reqwest::Client {
+        &mut self.client
     }
 
     /// Get the stored instance URL
@@ -35,7 +50,7 @@ impl Ctx {
         self.token = Some(token.into());
     }
 
-    /// Does the [`Ctx`] have a token set?
+    /// Does the [`Client`] have a token set?
     ///
     /// Note that it is not possible to retrieve the actual token.
     pub fn has_token(&self) -> bool {
@@ -43,8 +58,23 @@ impl Ctx {
     }
 
     /// Make a request to the instance for information about itself
-    pub async fn instance_info(&self) -> Result<InstanceInfo, reqwest::Error> {
+    pub async fn instance_info(&self) -> reqwest::Result<InstanceInfo> {
         self.request(Method::GET, "instance").await
+    }
+
+    /// List communities on the instance
+    pub async fn communities<'a>(
+        &self,
+        req: &ReqCommunities<'a>,
+    ) -> reqwest::Result<List<CommunityInfo>> {
+        self.request_with(Method::GET, "communities", |b| b.query(req))
+            .await
+    }
+
+    /// List posts on the instance
+    pub async fn posts<'a>(&self, req: &ReqPosts<'a>) -> reqwest::Result<List<PostListPost>> {
+        self.request_with(Method::GET, "posts", |b| b.query(req))
+            .await
     }
 
     /// Make a request to the instance

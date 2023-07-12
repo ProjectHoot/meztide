@@ -17,7 +17,7 @@ pub struct FlagInfo {
 
     pub flagger: MinimalAuthorInfo,
 
-    pub created_local: String,
+    pub created_local: Box<str>,
 
     pub content: Option<JustContentText>,
 
