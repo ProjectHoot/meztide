@@ -1,6 +1,7 @@
 //! Starting point for interacting with a lotide API
 
 use reqwest::{Method, RequestBuilder};
+use secrecy::Secret;
 use serde::de::DeserializeOwned;
 
 use crate::{
@@ -12,7 +13,7 @@ use crate::{
 pub struct Client {
     client: reqwest::Client,
     instance_url: String,
-    token: Option<Box<str>>,
+    token: Option<Secret<String>>,
 }
 
 impl Client {
@@ -46,8 +47,8 @@ impl Client {
     }
 
     /// Set the bearer token to be used with requests
-    pub fn set_token(&mut self, token: impl Into<Box<str>>) {
-        self.token = Some(token.into());
+    pub fn set_token(&mut self, token: impl ToString) {
+        self.token = Some(Secret::new(token.to_string()));
     }
 
     /// Does the [`Client`] have a token set?
@@ -93,15 +94,18 @@ impl Client {
         subpath: &str,
         f: impl Fn(RequestBuilder) -> RequestBuilder,
     ) -> Result<T, reqwest::Error> {
-        let mut builder = self
+        use secrecy::ExposeSecret;
+
+        let builder = self
             .client
             .request(method, &format!("{}/{}", self.instance_url, subpath));
 
-        if let Some(token) = &self.token {
-            builder = builder.bearer_auth(token);
-        }
-
         let builder = f(builder);
+
+        let builder = match &self.token {
+            Some(token) => builder.bearer_auth(token.expose_secret()),
+            None => builder,
+        };
 
         builder.send().await?.json().await
     }
