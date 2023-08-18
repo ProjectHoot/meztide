@@ -5,8 +5,8 @@ use secrecy::Secret;
 use serde::de::DeserializeOwned;
 
 use crate::{
-    api_models::{CommunityInfo, InstanceInfo, List, PostListPost},
-    prelude::{ReqCommunities, ReqPosts},
+    api_models::{CommunityInfo, InstanceInfo, List, LoginInfo, PostListPost},
+    prelude::{ReqCommunities, ReqPosts, ReqRegister},
 };
 
 /// Starting point for interacting with a lotide API
@@ -61,6 +61,72 @@ impl Client {
     /// Make a request to the instance for information about itself
     pub async fn instance_info(&self) -> reqwest::Result<InstanceInfo> {
         self.request(Method::GET, "instance").await
+    }
+
+    /// Log in to the service
+    pub async fn login(
+        &self,
+        username: impl ToString,
+        password: impl ToString,
+    ) -> reqwest::Result<(Client, LoginInfo)> {
+        #[derive(serde::Deserialize)]
+        struct LoginResponse {
+            token: Secret<String>,
+            #[serde(flatten)]
+            user: LoginInfo,
+        }
+
+        let LoginResponse { token, user } = self
+            .request_with(Method::POST, "logins", |b| {
+                b.json(&serde_json::json!({
+                    "username": username.to_string(),
+                    "password": password.to_string(),
+                }))
+            })
+            .await?;
+
+        let new_self = Self {
+            client: self.client.clone(),
+            instance_url: self.instance_url.clone(),
+            token: Some(token),
+        };
+
+        Ok((new_self, user))
+    }
+
+    /// Fetch current login state
+    pub async fn current_login(&self) -> reqwest::Result<LoginInfo> {
+        self.request(Method::GET, "logins/~current").await
+    }
+
+    /// Log out
+    pub async fn log_out(&self) -> reqwest::Result<()> {
+        self.request(Method::DELETE, "logins/~current").await
+    }
+
+    /// Register a new account
+    pub async fn register<'a>(
+        &self,
+        req: &ReqRegister<'a>,
+    ) -> reqwest::Result<(Option<Client>, LoginInfo)> {
+        #[derive(serde::Deserialize)]
+        struct RegisterResponse {
+            token: Option<Secret<String>>,
+            #[serde(flatten)]
+            user: LoginInfo,
+        }
+
+        let RegisterResponse { token, user } = self
+            .request_with(Method::POST, "users", |b| b.json(&req))
+            .await?;
+
+        let new_self = token.map(|t| Self {
+            client: self.client.clone(),
+            instance_url: self.instance_url.clone(),
+            token: Some(t),
+        });
+
+        Ok((new_self, user))
     }
 
     /// List communities on the instance

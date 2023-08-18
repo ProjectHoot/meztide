@@ -18,4 +18,7 @@ pub struct InstanceInfo {
     pub description: Content,
     pub web_push_vapid_key: Box<str>,
     pub signup_allowed: bool,
+    pub invitations_enabled: bool,
+    pub community_creation_requirement: Option<Box<str>>,
+    pub invitation_creation_requirement: Option<Box<str>>,
 }

@@ -5,6 +5,15 @@ use serde::{Deserialize, Serialize};
 use crate::prelude::{CommunityId, PageId};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ReqRegister<'a> {
+    username: &'a str,
+    password: &'a str,
+    email_address: Option<&'a str>,
+    invitation_key: Option<&'a str>,
+    login: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ReqCommunitesSort {
     OldLocal,
