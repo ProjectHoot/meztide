@@ -6,11 +6,11 @@ use crate::prelude::{CommunityId, PageId};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ReqRegister<'a> {
-    username: &'a str,
-    password: &'a str,
-    email_address: Option<&'a str>,
-    invitation_key: Option<&'a str>,
-    login: bool,
+    pub username: &'a str,
+    pub password: &'a str,
+    pub email_address: Option<&'a str>,
+    pub invitation_key: Option<&'a str>,
+    pub login: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
