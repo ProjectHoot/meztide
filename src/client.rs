@@ -16,6 +16,20 @@ pub struct Client {
     token: Option<Secret<String>>,
 }
 
+impl PartialEq for Client {
+    fn eq(&self, other: &Self) -> bool {
+        // PartialEq is useful for things like Yew
+        let tokens_are_equal = if let (Some(a), Some(b)) = (&self.token, &other.token) {
+            use secrecy::ExposeSecret;
+            a.expose_secret() == b.expose_secret()
+        } else {
+            // TODO: Address the potential security concern with comparing tokens like this
+            self.token.is_none() && other.token.is_none()
+        };
+        self.instance_url == other.instance_url && tokens_are_equal
+    }
+}
+
 impl Client {
     /// Create a new [`Client`]
     ///
