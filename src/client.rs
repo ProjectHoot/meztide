@@ -187,6 +187,6 @@ impl Client {
             None => builder,
         };
 
-        builder.send().await?.json().await
+        builder.send().await?.error_for_status()?.json().await
     }
 }
