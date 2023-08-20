@@ -15,6 +15,12 @@ pub struct PostInfo {
     pub poll: Option<PollInfo>,
 }
 
+impl PartialEq for PostInfo {
+    fn eq(&self, other: &Self) -> bool {
+        self.post.id() == other.post.id()
+    }
+}
+
 impl PostInfo {
     #[inline]
     pub fn id(&self) -> PostId {
@@ -39,6 +45,12 @@ pub struct PostListPost {
     pub score: i64,
     pub sticky: bool,
     pub your_vote: Option<Empty>,
+}
+
+impl PartialEq for PostListPost {
+    fn eq(&self, other: &Self) -> bool {
+        self.id() == other.id()
+    }
 }
 
 impl PostListPost {
