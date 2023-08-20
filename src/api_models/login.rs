@@ -14,7 +14,7 @@ pub struct LoginUserInfo {
 #[derive(Debug, Deserialize)]
 pub struct LoginInfo {
     pub user: LoginUserInfo,
-    pub permissions: LoginPermissions,
+    pub permissions: Option<LoginPermissions>,
 }
 
 #[derive(Debug, Deserialize)]
