@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, FixedOffset};
 use serde::Deserialize;
 
 use crate::ids::PostId;
@@ -39,7 +39,7 @@ pub struct PostListPost {
 
     pub href: Option<Box<str>>,
     pub author: Option<MinimalAuthorInfo>,
-    pub created: DateTime<Utc>,
+    pub created: DateTime<FixedOffset>,
     pub community: MinimalCommunityInfo,
     pub replies_count_total: Option<i64>,
     pub relevance: Option<f32>,
