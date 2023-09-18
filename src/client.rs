@@ -13,6 +13,7 @@ use crate::{
 pub struct Client {
     client: reqwest::Client,
     instance_url: String,
+    lang: Option<String>,
     token: Option<Secret<String>>,
 }
 
@@ -39,8 +40,25 @@ impl Client {
         Self {
             client: reqwest::Client::new(),
             instance_url: instance_url.to_string(),
+            lang: None,
             token: None,
         }
+    }
+
+    /// Set the language
+    pub fn set_lang(&mut self, lang: impl ToString) {
+        self.lang = Some(lang.to_string());
+    }
+
+    /// Set the language
+    pub fn with_lang(mut self, lang: impl ToString) -> Self {
+        self.set_lang(lang);
+        self
+    }
+
+    /// Get the language
+    pub fn lang(&self) -> Option<&str> {
+        self.lang.as_deref()
     }
 
     /// Get the internal [`reqwest::Client`] instance
@@ -102,6 +120,7 @@ impl Client {
         let new_self = Self {
             client: self.client.clone(),
             instance_url: self.instance_url.clone(),
+            lang: self.lang.clone(),
             token: Some(token),
         };
 
@@ -137,6 +156,7 @@ impl Client {
         let new_self = token.map(|t| Self {
             client: self.client.clone(),
             instance_url: self.instance_url.clone(),
+            lang: self.lang.clone(),
             token: Some(t),
         });
 
@@ -176,15 +196,18 @@ impl Client {
     ) -> Result<T, reqwest::Error> {
         use secrecy::ExposeSecret;
 
-        let builder = self
+        let mut builder = self
             .client
             .request(method, &format!("{}/{}", self.instance_url, subpath));
 
-        let builder = f(builder);
+        if let Some(lang) = &self.lang {
+            builder = builder.header("Accept-Language", lang);
+        };
 
-        let builder = match &self.token {
-            Some(token) => builder.bearer_auth(token.expose_secret()),
-            None => builder,
+        let mut builder = f(builder);
+
+        if let Some(token) = &self.token {
+            builder = builder.bearer_auth(token.expose_secret())
         };
 
         builder.send().await?.error_for_status()?.json().await
