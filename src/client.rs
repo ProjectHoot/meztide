@@ -84,10 +84,13 @@ impl Client {
     }
 
     /// Does the [`Client`] have a token set?
-    ///
-    /// Note that it is not possible to retrieve the actual token.
     pub fn has_token(&self) -> bool {
         self.token.is_some()
+    }
+
+    /// Get the stored token
+    pub fn get_token(&self) -> Option<Secret<String>> {
+        self.token.clone()
     }
 
     /// Make a request to the instance for information about itself
@@ -198,7 +201,7 @@ impl Client {
 
         let mut builder = self
             .client
-            .request(method, &format!("{}/{}", self.instance_url, subpath));
+            .request(method, format!("{}/{}", self.instance_url, subpath));
 
         if let Some(lang) = &self.lang {
             builder = builder.header("Accept-Language", lang);
