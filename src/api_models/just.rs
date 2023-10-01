@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use serde::Deserialize;
 
 use super::MinimalAuthorInfo;
@@ -18,6 +20,14 @@ pub struct JustUser {
 #[derive(Debug, Deserialize)]
 pub struct JustId<T> {
     pub id: T,
+}
+
+impl<T> Deref for JustId<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.id
+    }
 }
 
 /// Just a `content_text: Box<str>` field

@@ -55,3 +55,13 @@ pub struct ReqPosts<'a> {
     pub limit: Option<u32>,
     pub page: Option<PageId>,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ReqNewPost<'a> {
+    pub community: CommunityId,
+    pub href: Option<&'a str>,
+    pub content_markdown: Option<&'a str>,
+    pub content_text: Option<&'a str>,
+    pub title: &'a str,
+    pub sensitive: bool,
+}

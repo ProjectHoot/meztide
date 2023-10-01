@@ -5,8 +5,8 @@ use secrecy::Secret;
 use serde::de::DeserializeOwned;
 
 use crate::{
-    api_models::{CommunityInfo, InstanceInfo, List, LoginInfo, PostListPost},
-    prelude::{ReqCommunities, ReqPosts, ReqRegister},
+    api_models::{CommunityInfo, InstanceInfo, JustId, List, LoginInfo, PostListPost},
+    prelude::{PostId, ReqCommunities, ReqNewPost, ReqPosts, ReqRegister},
 };
 
 /// Starting point for interacting with a lotide API
@@ -181,6 +181,25 @@ impl Client {
             .await
     }
 
+    /// Create a new post
+    pub async fn new_post<'a>(&self, req: &ReqNewPost<'a>) -> reqwest::Result<PostId> {
+        let res: JustId<PostId> = self
+            .request_with(Method::POST, "posts", |b| b.json(&req))
+            .await?;
+        Ok(res.id)
+    }
+
+    /// Updload an image to the instance
+    pub async fn media(&self, mime: &str, data: Vec<u8>) -> reqwest::Result<String> {
+        let res: JustId<String> = self
+            .request_with(Method::POST, "media", move |b| {
+                b.header("Content-Type", mime).body(data)
+            })
+            .await?;
+
+        Ok(res.id)
+    }
+
     /// Make a request to the instance
     pub async fn request<T: DeserializeOwned>(
         &self,
@@ -195,7 +214,7 @@ impl Client {
         &self,
         method: Method,
         subpath: &str,
-        f: impl Fn(RequestBuilder) -> RequestBuilder,
+        f: impl FnOnce(RequestBuilder) -> RequestBuilder,
     ) -> Result<T, reqwest::Error> {
         use secrecy::ExposeSecret;
 
