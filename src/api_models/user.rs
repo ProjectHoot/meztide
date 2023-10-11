@@ -2,7 +2,7 @@ use serde::Deserialize;
 
 use crate::ids::UserId;
 
-use super::{AvatarInfo, Content};
+use super::{AvatarInfo, CommentFromUser, Content, PostListPost};
 
 /// Basic data about a user
 ///
@@ -35,4 +35,12 @@ pub struct ModeratorInfo {
     #[serde(flatten)]
     pub base: MinimalAuthorInfo,
     pub moderator_since: Option<Box<str>>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(tag = "type")]
+#[serde(rename_all = "snake_case")]
+pub enum UserThing {
+    Comment(CommentFromUser),
+    Post(PostListPost),
 }

@@ -34,6 +34,9 @@
 //!
 //! See [`api_models`] for more sights you can see.
 
+#[macro_use]
+extern crate string_concat;
+
 pub mod api_models;
 pub mod client;
 pub mod ids;

@@ -5,6 +5,12 @@ use serde::{Deserialize, Serialize};
 use crate::prelude::{CommunityId, PageId};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ContentSort {
+    Hot,
+    New,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ReqRegister<'a> {
     pub username: &'a str,
     pub password: &'a str,
@@ -38,7 +44,7 @@ pub struct ReqCommunities<'a> {
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct ReqPosts<'a> {
     pub include_your: Option<bool>,
-    pub sort: Option<&'a str>,
+    pub sort: Option<ContentSort>,
     pub search: Option<&'a str>,
     /// Filter by whether the post is approved in a local community
     pub in_any_local_community: Option<bool>,
@@ -63,5 +69,36 @@ pub struct ReqNewPost<'a> {
     pub content_markdown: Option<&'a str>,
     pub content_text: Option<&'a str>,
     pub title: &'a str,
+    pub sensitive: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ReqFlagPost<'a> {
+    pub content_text: Option<&'a str>,
+    pub to_community: bool,
+    pub to_site_admin: bool,
+    pub to_remote_site_admin: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum ReqPollVote {
+    Single { option: i64 },
+    Multiple { options: Vec<i64> },
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ReqPostReplies {
+    pub include_your: Option<bool>,
+    pub limit: Option<u32>,
+    pub sort: Option<ContentSort>,
+    pub page: Option<PageId>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ReqReply<'a> {
+    pub content_text: Option<&'a str>,
+    pub content_markdown: Option<&'a str>,
+    /// Must be a `local-media://` reference
+    pub attachment: Option<&'a str>,
     pub sensitive: bool,
 }

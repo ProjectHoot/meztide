@@ -8,7 +8,7 @@ use super::{Content, Empty, MinimalAuthorInfo, MinimalCommunityInfo, PollInfo};
 #[derive(Debug, Deserialize)]
 pub struct PostInfo {
     #[serde(flatten)]
-    pub post: PostListPost,
+    pub base: PostListPost,
 
     pub approved: bool,
     pub rejected: bool,
@@ -18,14 +18,14 @@ pub struct PostInfo {
 
 impl PartialEq for PostInfo {
     fn eq(&self, other: &Self) -> bool {
-        self.post.id() == other.post.id()
+        self.base.id() == other.base.id()
     }
 }
 
 impl PostInfo {
     #[inline]
     pub fn id(&self) -> PostId {
-        self.post.id()
+        self.base.id()
     }
 }
 

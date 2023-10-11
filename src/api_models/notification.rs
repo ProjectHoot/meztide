@@ -1,18 +1,18 @@
 use serde::Deserialize;
 
-use super::{PostCommentInfo, PostListPost};
+use super::{CommentInfo, PostListPost};
 
 #[derive(Debug, Deserialize)]
 #[serde(tag = "type")]
 #[serde(rename_all = "snake_case")]
 pub enum NotificationInfo {
     PostReply {
-        reply: PostCommentInfo,
+        reply: CommentInfo,
         post: PostListPost,
     },
     CommentReply {
-        reply: PostCommentInfo,
-        comment: PostCommentInfo,
+        reply: CommentInfo,
+        comment: CommentInfo,
         post: PostListPost,
     },
 }

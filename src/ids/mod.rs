@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 use smallstr::SmallString;
 
 mod community_id;
+mod post_id;
 
 macro_rules! impl_id {
     ($name:ident, $docs:expr) => {
@@ -40,4 +41,12 @@ impl_id!(RemoteId, "A remote ID.");
 impl_id!(UserId, "A user ID.");
 
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq, Hash)]
-pub struct PageId(pub SmallString<[u8; 8]>);
+pub struct PageId(pub SmallString<[u8; 24]>);
+
+impl ops::Deref for PageId {
+    type Target = str;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
